@@ -8,7 +8,7 @@ git clone https://github.com/canack/sentient.git
 
 cd sentient/cmd/sentient
 
-$OPENAI_API_KEY="API_KEY" go run .
+OPENAI_API_KEY="API_KEY" go run .
 ````
 
 ### If you want as a library, please check the [example](cmd/sentient/main.go)
