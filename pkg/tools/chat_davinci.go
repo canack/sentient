@@ -100,6 +100,13 @@ func (d *Davinci) Query(message string) models.ResponseMessage {
 	return models.ResponseMessage(answer)
 }
 
+func (d *Davinci) ActivateEmojiSupport() {
+	d.setNewPrompt("Use emojis when talking to me", true)
+	d.setNewPrompt("Sure thing! 😊 Here's a friendly hello 👋 and a thumbs up 🙌 to show my support!", false)
+	d.setNewPrompt("Now, I'll speak with you any language I want! =)", true)
+	d.setNewPrompt("Sure! 😊", false)
+}
+
 func (d *Davinci) setNewPrompt(message string, fromUser bool) {
 	var messages = d.data.messages
 	var msg string
