@@ -1,6 +1,6 @@
 # Sentient
 
-### Mini ChatBot which works with OpenAI's language model
+### Mini library which works with OpenAI's models
 
 ### Usage/Demo:
 ````shell
