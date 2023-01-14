@@ -1,9 +1,11 @@
 package tools
 
+import "github.com/canack/sentient/pkg/models"
+
 type ChatBot interface {
 	Setup(token string) error
 	TestConnection() error
-	Query(string) string
+	Query(string) models.ResponseMessage
 }
 
 type ChatBotInstance struct {

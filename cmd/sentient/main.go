@@ -35,7 +35,7 @@ func main() {
 
 		text = strings.Replace(text, "\n", "", -1)
 		message := davinci.Query(text)
-		fmt.Println(message)
+		fmt.Println(message.Pretty())
 		fmt.Println("------")
 	}
 

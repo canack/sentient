@@ -37,8 +37,10 @@ type davinciData struct {
 
 func (d *Davinci) Setup(token string) error {
 	*d = Davinci{
-		token:  token,
-		apiURL: "https://api.openai.com/v1/completions",
+		token:       token,
+		apiURL:      "https://api.openai.com/v1/completions",
+		Temperature: d.Temperature,
+		MaxTokens:   d.MaxTokens,
 		client: davinciClient{
 			httpClient: &http.Client{
 				Timeout: time.Second * 15,
@@ -75,7 +77,7 @@ func (d *Davinci) TestConnection() error {
 	return nil
 }
 
-func (d *Davinci) Query(message string) string {
+func (d *Davinci) Query(message string) models.ResponseMessage {
 	d.setNewPrompt(message, true)
 	d.client.request.Prompt = d.getPrompt()
 
@@ -95,7 +97,7 @@ func (d *Davinci) Query(message string) string {
 
 	d.setNewPrompt(answer, false)
 
-	return answer
+	return models.ResponseMessage(answer)
 }
 
 func (d *Davinci) setNewPrompt(message string, fromUser bool) {
