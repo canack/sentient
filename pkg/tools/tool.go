@@ -12,8 +12,8 @@ type ChatBotInstance struct {
 	ChatBot
 }
 
-func NewChatBot(bot ChatBot) *ChatBotInstance {
-	return &ChatBotInstance{
+func NewChatBot(bot ChatBot) ChatBotInstance {
+	return ChatBotInstance{
 		ChatBot: bot,
 	}
 }
