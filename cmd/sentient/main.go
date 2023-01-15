@@ -27,6 +27,8 @@ func main() {
 	log.Printf("Connection successful!")
 	fmt.Println("----------------------------------------")
 
+	davinci.ActivateEmojiSupport()
+	
 	// To speak with the bot, type in a message and press enter.
 	for {
 		fmt.Printf("Write something: ")

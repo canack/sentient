@@ -115,7 +115,12 @@ func (d *Davinci) setNewPrompt(message string, fromUser bool) {
 		msg = "Q: " + message + "\n"
 	} else {
 		trimAnswer := strings.TrimLeft(message, "\n")
-		msg = trimAnswer + "\n"
+
+		if strings.HasPrefix(trimAnswer, "A: ") {
+			trimAnswer = strings.TrimPrefix(trimAnswer, "A: ")
+		}
+
+		msg = "A: " + trimAnswer + "\n"
 	}
 
 	*messages = append(*messages, msg)
