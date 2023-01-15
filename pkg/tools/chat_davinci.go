@@ -32,7 +32,7 @@ type davinciClient struct {
 }
 
 type davinciData struct {
-	messages []string // Q: and A:
+	messages *[]string // Q: and A:
 }
 
 func (d *Davinci) Setup(token string) error {
@@ -56,7 +56,7 @@ func (d *Davinci) Setup(token string) error {
 			},
 		},
 		data: davinciData{
-			messages: []string{},
+			messages: &[]string{},
 		},
 	}
 	return nil
@@ -123,13 +123,13 @@ func (d *Davinci) setNewPrompt(message string, fromUser bool) {
 		msg = "A: " + trimAnswer + "\n"
 	}
 
-	messages = append(messages, msg)
+	*messages = append(*messages, msg)
 }
 
 func (d *Davinci) getPrompt() string {
 	var prompt string
 
-	for _, msg := range d.data.messages {
+	for _, msg := range *d.data.messages {
 		prompt += msg + "\n"
 	}
 
