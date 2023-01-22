@@ -126,6 +126,13 @@ func (d *Davinci) setNewPrompt(message string, fromUser bool) {
 	*messages = append(*messages, msg)
 }
 
+// NewClient resets the prompt and messages and returns a new client
+func (d *Davinci) NewClient() ChatBot {
+	d.client.request.Prompt = ""
+	d.data.messages = &[]string{}
+	return d
+}
+
 func (d *Davinci) getPrompt() string {
 	var prompt string
 
