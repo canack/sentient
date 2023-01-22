@@ -6,6 +6,7 @@ type ChatBot interface {
 	Setup(token string) error
 	TestConnection() error
 	Query(string) models.ResponseMessage
+	NewClient() ChatBot
 }
 
 type ChatBotInstance struct {
