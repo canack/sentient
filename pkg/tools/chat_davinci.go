@@ -128,10 +128,13 @@ func (d *Davinci) setNewPrompt(message string, fromUser bool) {
 
 // NewClient resets the prompt and messages and returns a new client
 func (d *Davinci) NewClient() ChatBot {
-	newDavinci := d
+	// copy the Davinci struct and reset the messages
+	newDavinci := Davinci{}
+	newDavinci = *d
 	newDavinci.data.messages = &[]string{}
 	newDavinci.client.request.Prompt = ""
-	return newDavinci
+
+	return &newDavinci
 }
 
 func (d *Davinci) getPrompt() string {
