@@ -72,11 +72,20 @@ func (d *Davinci) TestConnection() error {
 		d.client.request.Prompt = oldPromt
 	}()
 
-	_, err := d.do()
-	if err != nil {
-		return err
-	}
+	for i := 1; i <= int(d.client.retryLimit); i++ {
+		if i > int(d.client.retryLimit) {
+			return errors.New("max retries reached")
+		}
 
+		_, err := d.do()
+		if err != nil {
+			log.Printf("Error executing request: %v\n", err)
+			log.Printf("Retrying. [%d/%d]", i, d.client.retryLimit)
+			continue
+		}
+
+		return nil
+	}
 	return nil
 }
 
@@ -188,7 +197,7 @@ func (d *Davinci) do() ([]byte, error) {
 	var err error
 
 	for i := 1; i <= int(d.client.retryLimit); i++ {
-		if i > 3 {
+		if i > int(d.client.retryLimit) {
 			log.Printf("Error: Request failed after %d retries\n", d.client.retryLimit)
 			return nil, errors.New("request failed")
 		}
