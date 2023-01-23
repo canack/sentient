@@ -25,6 +25,8 @@ type Davinci struct {
 }
 
 type davinciClient struct {
+	timeout     time.Duration
+	retryLimit  uint8
 	request     *models.DavinciRequest
 	response    *models.DavinciResponse
 	httpClient  *http.Client
@@ -43,8 +45,9 @@ func (d *Davinci) Setup(token string) error {
 		MaxTokens:   d.MaxTokens,
 		client: davinciClient{
 			httpClient: &http.Client{
-				Timeout: time.Second * 15,
+				Timeout: time.Second * 30,
 			},
+			retryLimit: 3,
 			request: &models.DavinciRequest{
 				Model:            "text-davinci-003",
 				Prompt:           "",
@@ -105,6 +108,14 @@ func (d *Davinci) ActivateEmojiSupport() {
 	d.setNewPrompt("Sure thing! 😊 Here's a friendly hello 👋 and a thumbs up 🙌 to show my support!", false)
 	d.setNewPrompt("Now, I'll speak with you any language I want! =)", true)
 	d.setNewPrompt("Sure! 😊", false)
+}
+
+func (d *Davinci) SetTimeout(timeout time.Duration) {
+	d.client.httpClient.Timeout = timeout
+}
+
+func (d *Davinci) SetRetryLimit(limit uint8) {
+	d.client.retryLimit = limit
 }
 
 func (d *Davinci) setNewPrompt(message string, fromUser bool) {
@@ -173,15 +184,28 @@ func (d *Davinci) do() ([]byte, error) {
 		return nil, err
 	}
 
-	response, err := d.client.httpClient.Do(d.client.httpRequest)
-	if err != nil {
-		log.Printf("Error executing request: %v\n", err)
-		return nil, err
-	}
+	var response *http.Response
+	var err error
 
-	if response.StatusCode != http.StatusOK {
-		log.Printf("Error response from server: %v\n", response.Status)
-		return nil, errors.New("an error occurred while executing the request")
+	for i := 1; i <= int(d.client.retryLimit); i++ {
+		if i > 3 {
+			log.Printf("Error: Request failed after %d retries\n", d.client.retryLimit)
+			return nil, errors.New("request failed")
+		}
+
+		response, err = d.client.httpClient.Do(d.client.httpRequest)
+		if err != nil {
+			log.Printf("Error executing request: %v\n", err)
+			return nil, err
+		}
+
+		if response.StatusCode != http.StatusOK {
+			log.Printf("Error response from server: %v\n", response.Status)
+			log.Printf("Retrying request... [%d/%d]", i, d.client.retryLimit)
+			continue
+		}
+
+		break
 	}
 
 	bytes, err := io.ReadAll(response.Body)
